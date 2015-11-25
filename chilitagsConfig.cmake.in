@@ -1,0 +1,17 @@
+#######################################################
+# Fast source dir
+set( chilitags_SOURCE_DIR "@CMAKE_CURRENT_SOURCE_DIR@")
+
+#######################################################
+# Fast build dir
+set( chilitags_DIR "@CMAKE_CURRENT_BINARY_DIR@")
+
+#######################################################
+set( chilitags_INCLUDE_DIR  "@chilitags_INCLUDE_DIR@" )
+set( chilitags_INCLUDE_DIRS "@chilitags_INCLUDE_DIR@" )
+
+set( chilitags_LIBRARIES    "@chilitags_LIBRARIES@" )
+set( chilitags_LIBRARY      "@chilitags_LIBRARIES@" )
+
+set( chilitags_LIBRARY_DIR  "@chilitags_LIBRARY_DIR@" )
+set( chilitags_LIBRARY_DIRS "@chilitags_LIBRARY_DIR@" )

@@ -25,10 +25,13 @@ project(chilitags)
 set(CPACK_PACKAGE_VERSION_MAJOR "2")
 set(CPACK_PACKAGE_VERSION_MINOR "0")
 set(CPACK_PACKAGE_VERSION_PATCH "0")
+CMAKE_MINIMUM_REQUIRED (VERSION 2.8.3)
+SET(CMAKE_VERBOSE_MAKEFILE ON)
+
 
 add_definitions(-std=c++11)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
-find_package(OpenCV REQUIRED )
+find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 message(STATUS "OpenCV version: ${OpenCV_VERSION}")
 
@@ -38,8 +41,6 @@ message(STATUS "OpenCV version: ${OpenCV_VERSION}")
 
 option(WITH_SAMPLES                     "Build demos" OFF)
 option(WITH_TESTS                       "Build tests" OFF)
-option(WITH_JNI_BINDINGS                "Build JNI bindings compatible with ordinary Java and Android" OFF)
-option(ANDROID_INSTALL_LIBRARIES        "Install the chilitag libraries inside project at ANDROID_PROJECT_ROOT" OFF)
 
 if(DEFINED ANDROID) #OPENCV has a nice macro for this: OCV_OPTION, consider using it.
     option(WITH_PTHREADS                "Multithreading support with pthreads" ON)
@@ -81,14 +82,44 @@ if(${OpenCV_VERSION} VERSION_GREATER 2.9.0)
     add_definitions(-DOPENCV3)
 endif()
 
-include_directories(include)
-add_subdirectory(src)
+# Add Sources
+SET(SOURCES  ${PROJECT_SOURCE_DIR}/src/Chilitags3D.cpp
+             ${PROJECT_SOURCE_DIR}/src/Chilitags.cpp
+             ${PROJECT_SOURCE_DIR}/src/Codec.cpp
+             ${PROJECT_SOURCE_DIR}/src/Codec.hpp
+             ${PROJECT_SOURCE_DIR}/src/Decode.cpp
+             ${PROJECT_SOURCE_DIR}/src/Decode.hpp
+             ${PROJECT_SOURCE_DIR}/src/Detect.cpp
+             ${PROJECT_SOURCE_DIR}/src/Detect.hpp
+             ${PROJECT_SOURCE_DIR}/src/EnsureGreyscale.cpp
+             ${PROJECT_SOURCE_DIR}/src/EnsureGreyscale.hpp
+             ${PROJECT_SOURCE_DIR}/src/EstimatePose3D.cpp
+             ${PROJECT_SOURCE_DIR}/src/EstimatePose3D.hpp
+             ${PROJECT_SOURCE_DIR}/src/Filter3D.cpp
+             ${PROJECT_SOURCE_DIR}/src/Filter3D.hpp
+             ${PROJECT_SOURCE_DIR}/src/Filter.cpp
+             ${PROJECT_SOURCE_DIR}/src/Filter.hpp
+             ${PROJECT_SOURCE_DIR}/src/FindQuads.cpp
+             ${PROJECT_SOURCE_DIR}/src/FindQuads.hpp
+             ${PROJECT_SOURCE_DIR}/src/GrowRoi.cpp
+             ${PROJECT_SOURCE_DIR}/src/GrowRoi.hpp
+             ${PROJECT_SOURCE_DIR}/src/ReadBits.cpp
+             ${PROJECT_SOURCE_DIR}/src/ReadBits.hpp
+             ${PROJECT_SOURCE_DIR}/src/Refine.cpp
+             ${PROJECT_SOURCE_DIR}/src/Refine.hpp
+             ${PROJECT_SOURCE_DIR}/src/ScreenOut.cpp
+             ${PROJECT_SOURCE_DIR}/src/ScreenOut.hpp
+             ${PROJECT_SOURCE_DIR}/src/Track.cpp
+             ${PROJECT_SOURCE_DIR}/src/Track.hpp)
+INCLUDE_DIRECTORIES(include src)
+ADD_LIBRARY(${PROJECT_NAME} SHARED ${SOURCES})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${OpenCV_LIBS})
 
 ##########################################
 ##           Modules                   ###
 ##########################################
 
-include("${CMAKE_SOURCE_DIR}/cmake/TargetDoc.cmake" OPTIONAL)
+#include("${CMAKE_SOURCE_DIR}/cmake/TargetDoc.cmake" OPTIONAL)
 
 if (WITH_TOOLS)
     add_subdirectory(tools)
@@ -112,3 +143,17 @@ if(ANDROID_INSTALL_LIBRARIES)
     endif()
 endif()
 
+
+
+################################################################################
+# Create the chilitagsConfig.cmake file for other cmake projects.
+GET_TARGET_PROPERTY( FULL_LIBRARY_NAME ${PROJECT_NAME} LOCATION )
+SET(chilitags_LIBRARIES ${FULL_LIBRARY_NAME} )
+SET(chilitags_LIBRARY_DIR ${PROJECT_BINARY_DIR} )
+SET(chilitags_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include")
+CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/chilitagsConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/chilitagsConfig.cmake @ONLY IMMEDIATE )
+export( PACKAGE chilitags )
+
+INSTALL(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_PREFIX}/include FILES_MATCHING PATTERN "*.hpp" )
+INSTALL(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib )
