@@ -26,7 +26,7 @@ set(CPACK_PACKAGE_VERSION_MAJOR "2")
 set(CPACK_PACKAGE_VERSION_MINOR "0")
 set(CPACK_PACKAGE_VERSION_PATCH "0")
 CMAKE_MINIMUM_REQUIRED (VERSION 2.8.3)
-SET(CMAKE_VERBOSE_MAKEFILE ON)
+SET(CMAKE_VERBOSE_MAKEFILE OFF)
 SET(CMAKE_BUILD_TYPE Release)
 
 
@@ -67,7 +67,7 @@ elseif(UNIX)
     option(WITH_PTHREADS                "Multithreading support with pthreads" ON)
     option(WITH_TOOLS                   "provides the marker generation tool" ON)
 else()
-    option(WITH_PTHREADS                "Multithreading support with pthreads" OFF)
+    option(WITH_PTHREADS                "Multithreading support with pthreads" ON)
     option(WITH_TOOLS                   "provides the marker generation tool" ON)
 endif()
 
