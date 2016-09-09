@@ -113,7 +113,6 @@ const std::vector<unsigned char>& ReadBits::operator()(const cv::Mat &inputImage
     cv::threshold(mSamples, mBits, -1, 1, cv::THRESH_BINARY | cv::THRESH_OTSU);
 
 #ifdef DEBUG_ReadBits
-
     for (int i = 0; i < DATA_SIZE; ++i)
     {
         for (int j = 0; j < DATA_SIZE; ++j)

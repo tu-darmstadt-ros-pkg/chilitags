@@ -79,6 +79,10 @@ if(WITH_PTHREADS)
     add_definitions(-DHAS_MULTITHREADING)
 endif()
 
+if(WITH_INVERTED_TAGS)
+    add_definitions(-DHAS_INVERTED_TAGS)
+endif()
+
 if(${OpenCV_VERSION} VERSION_GREATER 2.9.0)
     add_definitions(-DOPENCV3)
 endif()
