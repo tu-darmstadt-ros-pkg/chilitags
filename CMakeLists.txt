@@ -116,7 +116,7 @@ SET(SOURCES  ${PROJECT_SOURCE_DIR}/src/Chilitags3D.cpp
              ${PROJECT_SOURCE_DIR}/src/ScreenOut.hpp
              ${PROJECT_SOURCE_DIR}/src/Track.cpp
              ${PROJECT_SOURCE_DIR}/src/Track.hpp)
-INCLUDE_DIRECTORIES(include src)
+INCLUDE_DIRECTORIES(include src include/${PROJECT_NAME}) #exporting both for compatibility
 ADD_LIBRARY(${PROJECT_NAME} SHARED ${SOURCES})
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${OpenCV_LIBS})
 
