@@ -315,7 +315,7 @@ int decode(const cv::Matx<unsigned char, 6, 6> &bits) const;
 cv::Mat draw(
     int id,
     int cellSize = 1,
-    bool withMargin = false,
+    int marginSize = 2,
     cv::Scalar color = cv::Scalar(0,0,0)) const;
 
 //@}
