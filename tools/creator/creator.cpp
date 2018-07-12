@@ -34,7 +34,7 @@ int main(int argc, char **argv)
         std::cout << " - zoom is a non null integer indicating the length in pixel\n";
         std::cout << "   of each bit of the tag matrix (default: 1).\n";
         std::cout << " - margin is an integer indicating the width in bits \n";
-        std::cout << "   of the white rectangle to be drawn around the tag, \n";
+        std::cout << "   of the white rectangle to be drawn around the tag (default: 2), \n";
         std::cout << "   (make sure the black borders of the tag\n";
         std::cout << "   still contrast with where it is placed),\n";
         std::cout << " - red, green and blue define the color with which to draw the tag.\n";
