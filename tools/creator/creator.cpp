@@ -28,8 +28,17 @@
 
 int main(int argc, char **argv)
 {
+    bool stdout = false;
+    if (argc > 1 && strcmp(argv[1], "--stdout") == 0) {
+      stdout = true;
+      for(int i = 1; i < argc; ++i) {
+        argv[i]  = argv[i + 1];
+      }
+      argc--;
+    }
+
     if (argc <= 1) {
-        std::cout << "Usage: " << argv[0] << " tagID [zoom [margin [red green blue]]]\n";
+        std::cout << "Usage: " << argv[0] << " [--stdout] tagID [zoom [margin [red green blue]]]\n";
         std::cout << " - tagId is the id of the tag to draw, between 0 and 1023,\n";
         std::cout << " - zoom is a non null integer indicating the length in pixel\n";
         std::cout << "   of each bit of the tag matrix (default: 1).\n";
@@ -42,13 +51,23 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    std::string outputFilename = std::string(argv[1])+".png";
     int tagId = std::atoi(argv[1]);
     int zoom = (argc > 2) ? std::atoi(argv[2]) : 1;
     int margin_size = (argc > 3) ? std::atoi(argv[3]) : 2;
     cv::Scalar color = (argc > 6 ? cv::Scalar(std::atoi(argv[4]), std::atoi(argv[5]), std::atoi(argv[6])) : cv::Scalar(0,0,0));
 
-    cv::imwrite(outputFilename, chilitags::Chilitags().draw(tagId, zoom, margin_size, color));
+    if (stdout) {
+      // output to stdout
+      std::vector<uchar> buf;
+      cv::imencode(".png", chilitags::Chilitags().draw(tagId, zoom, margin_size, color), buf);
+      for (const auto& c: buf) {
+        std::cout << c;
+      }
+    } else {
+      // output to file
+      std::string outputFilename = std::string(argv[1]) + ".png";
+      cv::imwrite(outputFilename, chilitags::Chilitags().draw(tagId, zoom, margin_size, color));
+    }
 
     return 0;
 }
