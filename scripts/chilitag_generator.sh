@@ -57,6 +57,6 @@ for ((i=$FIRST_ID;i<=$LAST_ID;i+=4)); do
     j=$((i+1))
     k=$((i+2))
     l=$((i+3))
-    convert "${i}_${j}.${OUTPUT_FORMAT}" "${k}_${l}.${OUTPUT_FORMAT}" -append "${i}_${j}_${k}_${l}.${OUTPUT_FORMAT}"
+    convert "${i}_${j}.${OUTPUT_FORMAT}" "${k}_${l}.${OUTPUT_FORMAT}" -append -rotate 180 "${i}_${j}_${k}_${l}.${OUTPUT_FORMAT}"
     rm "${i}_${j}.${OUTPUT_FORMAT}" "${k}_${l}.${OUTPUT_FORMAT}"
 done
