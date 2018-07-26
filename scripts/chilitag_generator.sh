@@ -2,6 +2,7 @@
 
 DPI=300
 OUTPUT_FORMAT="tiff"
+TEXT_COLOR="#505050"
 
 generate_chilitag() {
     CHILITAG_ID=$1
@@ -13,7 +14,7 @@ generate_chilitag() {
     CHILITAG_GRAPHIC=$(grep -Pzo "<g(.|\n)*</g>" "${CHILITAG_ID}.svg") 
 
     # insert chilitag graphic and id into template svg
-    CHILITAG_ID="${CHILITAG_ID}" CHILITAG_GRAPHIC="${CHILITAG_GRAPHIC}" envsubst < template.svg > "${CHILITAG_ID}.svg"
+    CHILITAG_ID="${CHILITAG_ID}" CHILITAG_GRAPHIC="${CHILITAG_GRAPHIC}" TEXT_COLOR="${TEXT_COLOR}" envsubst < template.svg > "${CHILITAG_ID}.svg"
 
     # render svg to png (using inkscape for proper svg support)
     inkscape --export-dpi=${DPI} --export-png="${CHILITAG_ID}.png" "${CHILITAG_ID}.svg" >/dev/null
