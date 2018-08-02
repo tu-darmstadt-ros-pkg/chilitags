@@ -8,7 +8,7 @@ generate_chilitag() {
     CHILITAG_ID=$1
     
     # create chilitag and trace it into an svg file
-    PATH=$PATH:$ROS_WORKSPACE/../devel/bin chilitags-creator --stdout ${CHILITAG_ID} 20 | convert - ppm:- | potrace -s --output "${CHILITAG_ID}.svg"
+    chilitags-creator --stdout ${CHILITAG_ID} 20 | convert - ppm:- | potrace -s --output "${CHILITAG_ID}.svg"
 
     # extract actual chilitag graphic from svg
     CHILITAG_GRAPHIC=$(grep -Pzo "<g(.|\n)*</g>" "${CHILITAG_ID}.svg") 
