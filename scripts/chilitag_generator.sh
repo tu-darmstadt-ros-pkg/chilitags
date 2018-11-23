@@ -1,14 +1,20 @@
 #!/bin/bash
 
-DPI=300
+# switch between creating just the individual tag mashes for gazebo, or the combined tag plates for printing
+CREATE_MESHES=0
 
-#OUTPUT_FORMAT="svg"
-#OUTPUT_FORMAT="png"
-OUTPUT_FORMAT="tiff"
+if [[ "${CREATE_MESHES}" == "1" ]]; then
+    DPI=55
+    OUTPUT_FORMAT="png"
+    SVG_TEMPLATE="normal_margin.template.svg"
+else
+    DPI=300
+    #OUTPUT_FORMAT="svg"
+    OUTPUT_FORMAT="tiff"
+    SVG_TEMPLATE="narrow_margin.template.svg"
+fi
 
 TEXT_COLOR="#707070"
-#SVG_TEMPLATE="normal_margin.template.svg"
-SVG_TEMPLATE="narrow_margin.template.svg"
 
 ROWS=3
 COLS=3
@@ -27,7 +33,7 @@ MAKE_A4_PDF=0
 
 check_command() {
     COMMAND=$1
-    if ! [ -x "$(command -v ${COMMAND})" ]; then
+    if ! [[ -x "$(command -v ${COMMAND})" ]]; then
         command_not_found_handle ${COMMAND}
         exit 1
     fi
@@ -78,11 +84,11 @@ generate_chilitag() {
     # insert chilitag graphic and id into SVG template
     CHILITAG_ID="${CHILITAG_ID}" CHILITAG_GRAPHIC="${CHILITAG_GRAPHIC}" TEXT_COLOR="${TEXT_COLOR}" envsubst < ${SVG_TEMPLATE} > "${CHILITAG_ID}.svg"
 
-    if [ "${OUTPUT_FORMAT}" != "svg" ]; then
+    if [[ "${OUTPUT_FORMAT}" != "svg" ]]; then
         # render svg to png (using inkscape for proper svg support)
         inkscape --export-dpi=${DPI} --export-png="${CHILITAG_ID}.png" "${CHILITAG_ID}.svg" >/dev/null
 
-        if [ "${OUTPUT_FORMAT}" != "png" ]; then
+        if [[ "${OUTPUT_FORMAT}" != "png" ]]; then
             # convert png to OUTPUT_FORMAT format
             convert "${CHILITAG_ID}.png" "${CHILITAG_ID}.${OUTPUT_FORMAT}"
             rm "${CHILITAG_ID}.png"
@@ -97,11 +103,11 @@ generate_overlay() {
     # insert tag name into SVG template
     OVERLAY_TAG_NAME="${OVERLAY_TAG_NAME}" OVERLAY_TEXT_COLOR="${OVERLAY_TEXT_COLOR}" envsubst < ${OVERLAY_SVG_TEMPLATE} > "${OVERLAY_TAG_NAME}.svg"
 
-    if [ "${OUTPUT_FORMAT}" != "svg" ]; then
+    if [[ "${OUTPUT_FORMAT}" != "svg" ]]; then
         # render svg to png (using inkscape for proper svg support)
         inkscape --export-dpi=${OVERLAY_DPI} --export-png="${OVERLAY_TAG_NAME}.png" "${OVERLAY_TAG_NAME}.svg" >/dev/null
 
-        if [ "${OUTPUT_FORMAT}" != "png" ]; then
+        if [[ "${OUTPUT_FORMAT}" != "png" ]]; then
             # convert png to OUTPUT_FORMAT format
             convert "${OVERLAY_TAG_NAME}.png" "${OVERLAY_TAG_NAME}.${OUTPUT_FORMAT}"
             rm "${OVERLAY_TAG_NAME}.png"
@@ -121,13 +127,13 @@ make_row_name() {
 }
 
 FIRST_ID=$1
-if [ -z $FIRST_ID ]; then
+if [[ -z ${FIRST_ID} ]]; then
     echo "usage $0 FIRST_ID [COUNT]"
     exit 1
 fi
 
 COUNT=$2
-if [ -z $COUNT ]; then
+if [[ -z ${COUNT} ]]; then
     COUNT=1
 fi
 COUNT=$(( (COUNT + TAGS_PER_BOARD - 1) / TAGS_PER_BOARD * TAGS_PER_BOARD )) # round up to multiples of TAGS_PER_BOARD
@@ -137,6 +143,11 @@ LAST_ID=$((FIRST_ID + COUNT - 1))
 for ((i = FIRST_ID; i <= LAST_ID; i++)); do
     generate_chilitag ${i}
 done
+
+if [[ "${CREATE_MESHES}" == "1" ]]; then
+    echo "Finished creating individual tag meshes."
+    exit
+fi
 
 # concatenate chilitags in a row
 for ((i = FIRST_ID; i <= LAST_ID; i += COLS)); do
@@ -167,7 +178,7 @@ for ((i = FIRST_ID; i <= LAST_ID; i += TAGS_PER_BOARD)); do
         rm "${base_name}.${OUTPUT_FORMAT}" "${next_name}.${OUTPUT_FORMAT}"
         base_name="${base_name}_${next_name}"
     done
-    if [ "${OVERLAY_SVG_TEMPLATE}" != "" ]; then
+    if [[ "${OVERLAY_SVG_TEMPLATE}" != "" ]]; then
         tag_name=$(map_tag_id_to_tag_name "${base_name}")
         generate_overlay "${tag_name}"
         composite -gravity center "${tag_name}.${OUTPUT_FORMAT}" "${base_name}.${OUTPUT_FORMAT}" "${base_name}_${tag_name}.${OUTPUT_FORMAT}"
@@ -175,7 +186,7 @@ for ((i = FIRST_ID; i <= LAST_ID; i += TAGS_PER_BOARD)); do
         rm "${base_name}.${OUTPUT_FORMAT}"
         base_name="${base_name}_${tag_name}"
     fi
-    if [ "${MAKE_A4_PDF}" == "1" ]; then
+    if [[ "${MAKE_A4_PDF}" == "1" ]]; then
         # make PDF from bitmap
         sam2p -j:quiet "${base_name}.${OUTPUT_FORMAT}" "${base_name}.a4.pdf"
         # scale pdf to fit on A4 page
@@ -183,6 +194,6 @@ for ((i = FIRST_ID; i <= LAST_ID; i += TAGS_PER_BOARD)); do
     fi
 done
 
-if [ "${MAKE_A4_PDF}" == "1" ]; then
+if [[ "${MAKE_A4_PDF}" == "1" ]]; then
     pdftk *.a4.pdf cat output all_tags.pdf
 fi
