@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# usage: $0 FIRST_ID COUNT
+# with FIRST_ID being a chilitag number (0-1024) and COUNT the number of tags, so 9 times the POIs
+# to rename tiff files without the tag numbers use this:
+# for f in *.tiff; do mv "$f" "$(echo $f | cut -d'_' -f 10)"; done
+
 # switch between creating just the individual tag mashes for gazebo, or the combined tag plates for printing
 CREATE_MESHES=0
 
