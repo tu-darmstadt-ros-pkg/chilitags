@@ -63,6 +63,7 @@ mapping = {
     '90': 'Bow 03:00',
     '99': 'Bow 07:30',
     '108': 'Bow 04:30',
+    '1008': 'Stop Tag',
 }
 poi_start_tag = 117
 for poi in range(1, 81):
