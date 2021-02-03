@@ -177,7 +177,42 @@ bool read3DConfiguration(const std::string &filenameOrString, bool omitOtherTags
     }
 
     mId2Configuration.clear();
-    for(const auto &objectConfig : configuration.root()) {
+    std::cout << filenameOrString << " bla\n";
+    //static int obj = 0;
+    std::cout << "config size " << configuration.root().size() << " type " << configuration.root().type() << "\n";
+
+    /*
+    for(cv::FileNodeIterator fit = configuration.root().begin(); fit != configuration.root().end(); ++fit)
+    {
+      cv::FileNode item = *fit;
+      std::string somekey = item.name();
+      std::cout << "k " << somekey << "\n";
+      //double someval = (double)item;
+    }
+    */
+
+    cv::FileNode fn = configuration.root();
+    for (cv::FileNodeIterator fit = fn.begin(); fit != fn.end(); ++fit)
+    {
+        cv::FileNode item = *fit;
+        std::string somekey = item.name();
+        std::cout << "name: " << somekey << std::endl;
+    }
+
+    for(const cv::FileNode &objectConfig : configuration.root()) {
+        //std::cout << obj << " o\n";
+        //obj++;
+
+        cv::String tmp;
+
+        objectConfig >> tmp;
+
+        std::cout << tmp << "\n";
+        
+        std::cout << objectConfig.size() << " type " << objectConfig.type() << "\n";
+        //for (size_t i = 0; i < objectConfig.keys().size(); ++i){
+        //  std::cout << objectConfig.keys()[i] << "\n";
+        //}
         for(const auto &tagConfig : objectConfig) {
             int id;
             tagConfig["tag"] >> id;
@@ -191,6 +226,10 @@ bool read3DConfiguration(const std::string &filenameOrString, bool omitOtherTags
                 tagConfig["translation"][i] >> translation[i];
                 tagConfig["rotation"]   [i] >> rotation   [i];
             }
+
+
+
+            std::cout << "obj name: " << objectConfig.name() << "tag name: " << tagConfig.name() << " type " << configuration.root().type() << " id " << id << " size " << size << " keep " << keep << " tc size " << tagConfig.size() << "\n";
 
             mId2Configuration[id] = std::make_pair(
                 objectConfig.name(),
